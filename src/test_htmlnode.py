@@ -1,27 +1,62 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
+
 
 class TestHTMLNode(unittest.TestCase):
-    
-    def test_props_to_html(self):
-        props = {"href": "https://www.google.com", "target": "_blank"}
-        node =  HTMLNode(tag="a", value="Google", props=props)
+    def test_to_html_props(self):
+        node = HTMLNode(
+            "div",
+            "Hello, world!",
+            None,
+            {"class": "greeting", "href": "https://boot.dev"},
+        )
+        self.assertEqual(
+            node.props_to_html(),
+            ' class="greeting" href="https://boot.dev"',
+        )
 
-        expected_output = ' href="https://www.google.com" target="_blank"'
-        self.assertEqual(node.props_to_html(), expected_output)
+    def test_values(self):
+        node = HTMLNode(
+            "div",
+            "I wish I could read",
+        )
+        self.assertEqual(
+            node.tag,
+            "div",
+        )
+        self.assertEqual(
+            node.value,
+            "I wish I could read",
+        )
+        self.assertEqual(
+            node.children,
+            None,
+        )
+        self.assertEqual(
+            node.props,
+            None,
+        )
 
-    def test_empty_props(self):
-        node = HTMLNode(tag="p", value="Hello world!")
+    def test_repr(self):
+        node = HTMLNode(
+            "p",
+            "What a strange world",
+            None,
+            {"class": "primary"},
+        )
+        self.assertEqual(
+            node.__repr__(),
+            "HTMLNode(p, What a strange world, children: None, {'class': 'primary'})",
+        )
 
-        expected_output = ''
-        self.assertEqual(node.props_to_html(), expected_output)
+    def test_to_html_no_children(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
 
-    def test_img_props(self):
-        props = {"src": "image.jpg", "alt": "A description of the image"}
-        node = HTMLNode(tag="img", value="image", props=props)
+    def test_to_html_no_tag(self):
+        node = LeafNode(None, "Hello, world!")
+        self.assertEqual(node.to_html(), "Hello, world!")
 
-        expected_output = ' src="image.jpg" alt="A description of the image"'
-        self.assertEqual(node.props_to_html(), expected_output)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
